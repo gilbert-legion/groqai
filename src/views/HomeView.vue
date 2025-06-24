@@ -1,28 +1,6 @@
 <template>
   <div class="homeview_container">
-    <div class="center_container">
-      <div class="box" :class="{ 'maximized': isAsrMaximized }">
-        <div class="func_desc">
-          <i class="el-icon-microphone"></i>
-          Speech Recognition Results
-          <el-button
-            class="maximize-btn"
-            :icon="isAsrMaximized ? 'el-icon-minus' : 'el-icon-full-screen'"
-            @click="toggleAsrMaximize"
-            size="mini"
-            type="text"
-            aria-label="Toggle maximize speech panel"
-            :title="isAsrMaximized ? 'Minimize Speech Panel' : 'Maximize Speech Panel'"
-          ></el-button>
-        </div>
-        <div v-if="!currentText" class="no-content-text">No Content</div>
-        <div class="asr_content scrollable-panel">{{ currentText }}</div>
-        <div class="single_part_bottom_bar">
-          <el-button icon="el-icon-delete" :disabled="!currentText" @click="clearASRContent">
-            Clear Text
-          </el-button>
-        </div>
-      </div>
+    <div class="center_container vertical-panels">
       <div
         class="box ai-panel"
         :class="{
@@ -30,7 +8,6 @@
           'ai-minimized': isAiMinimized,
           'hidden': isAsrMaximized
         }"
-        style="border-left: none;"
       >
         <div class="func_desc">
           <i class="el-icon-s-custom"></i>
@@ -68,6 +45,28 @@
             </div>
           </div>
         </transition>
+      </div>
+      <div class="box" :class="{ 'maximized': isAsrMaximized }">
+        <div class="func_desc">
+          <i class="el-icon-microphone"></i>
+          Speech Recognition Results
+          <el-button
+            class="maximize-btn"
+            :icon="isAsrMaximized ? 'el-icon-minus' : 'el-icon-full-screen'"
+            @click="toggleAsrMaximize"
+            size="mini"
+            type="text"
+            aria-label="Toggle maximize speech panel"
+            :title="isAsrMaximized ? 'Minimize Speech Panel' : 'Maximize Speech Panel'"
+          ></el-button>
+        </div>
+        <div v-if="!currentText" class="no-content-text">No Content</div>
+        <div class="asr_content scrollable-panel">{{ currentText }}</div>
+        <div class="single_part_bottom_bar">
+          <el-button icon="el-icon-delete" :disabled="!currentText" @click="clearASRContent">
+            Clear Text
+          </el-button>
+        </div>
       </div>
     </div>
     <div class="title_function_bar">
@@ -321,6 +320,81 @@ async function sleep(ms) {
   transition: height 0.3s cubic-bezier(.4,0,.2,1);
 }
 
+.center_container.vertical-panels {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 150px);
+  gap: 16px;
+  min-height: 0;
+}
+
+.box,
+.ai-panel {
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.ai-panel-content,
+.asr_content.scrollable-panel,
+.ai_result_content.scrollable-panel {
+  flex: 1 1 auto;
+  min-height: 100px;
+  max-height: 250px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid var(--border-light);
+  background: var(--panel-bg);
+  transition: background 0.3s, color 0.3s;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling for mobile */
+}
+
+/* Custom scrollbars for Android Chrome/Edge/Firefox */
+.scrollable-panel::-webkit-scrollbar {
+  width: 8px;
+  background: var(--bg-secondary);
+}
+.scrollable-panel::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+.scrollable-panel::-webkit-scrollbar-thumb:hover {
+  background: var(--button-primary);
+}
+.scrollable-panel {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) var(--bg-secondary);
+}
+
+/* Responsive: stack panels and allow more height for scrolling on small screens */
+@media (max-width: 600px) {
+  .center_container.vertical-panels {
+    height: calc(100vh - 120px);
+    gap: 8px;
+  }
+  .ai-panel-content,
+  .asr_content.scrollable-panel,
+  .ai_result_content.scrollable-panel {
+    min-height: 80px;
+    max-height: 35vh;
+    font-size: 15px;
+    padding: 6px;
+  }
+  .func_desc {
+    font-size: 15px;
+    min-height: 28px;
+    padding-bottom: 4px;
+  }
+  .single_part_bottom_bar {
+    margin-top: 6px;
+    padding-top: 6px;
+  }
+}
+
 .box {
   flex: 1;
   border: 1px solid var(--panel-border);
@@ -342,6 +416,9 @@ async function sleep(ms) {
 .ai-panel {
   transition: all 0.3s cubic-bezier(.4,0,.2,1);
   position: relative;
+  margin-bottom: 0;
+  /* Remove border-left if present from previous layout */
+  border-left: 1px solid var(--panel-border);
 }
 
 .ai-panel.ai-maximized {
@@ -457,7 +534,8 @@ async function sleep(ms) {
   min-height: 100px;
 }
 
-.ai_result_content.scrollable-panel {
+.ai_result_content.scrollable-panel,
+.asr_content.scrollable-panel {
   flex: 1 1 auto;
   min-height: 100px;
   max-height: 250px;
@@ -470,6 +548,7 @@ async function sleep(ms) {
   transition: background 0.3s, color 0.3s;
 }
 
+/* Custom scrollbars (already present in your code) */
 .scrollable-panel::-webkit-scrollbar {
   width: 8px;
   background: var(--bg-secondary);
@@ -481,8 +560,6 @@ async function sleep(ms) {
 .scrollable-panel::-webkit-scrollbar-thumb:hover {
   background: var(--button-primary);
 }
-
-/* For Firefox */
 .scrollable-panel {
   scrollbar-width: thin;
   scrollbar-color: var(--border-color) var(--bg-secondary);
