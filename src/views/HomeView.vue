@@ -462,6 +462,7 @@ async function sleep(ms) {
   min-height: 100px;
   max-height: 250px;
   overflow-y: auto;
+  margin-bottom: 10px;
   padding: 8px;
   border-radius: 4px;
   border: 1px solid var(--border-light);
