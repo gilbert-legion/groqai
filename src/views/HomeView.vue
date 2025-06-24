@@ -16,7 +16,7 @@
           ></el-button>
         </div>
         <div v-if="!currentText" class="no-content-text">No Content</div>
-        <div class="asr_content">{{ currentText }}</div>
+        <div class="asr_content scrollable-panel">{{ currentText }}</div>
         <div class="single_part_bottom_bar">
           <el-button icon="el-icon-delete" :disabled="!currentText" @click="clearASRContent">
             Clear Text
@@ -60,7 +60,7 @@
         <transition name="ai-panel-transition">
           <div v-show="!isAiMinimized" class="ai-panel-content">
             <LoadingIcon v-show="show_ai_thinking_effect"/>
-            <div class="ai_result_content">{{ ai_result }}</div>
+            <div class="ai_result_content scrollable-panel">{{ ai_result }}</div>
             <div class="single_part_bottom_bar">
               <el-button icon="el-icon-thumb" @click="askCurrentText" :disabled="!isGetAIAnswerAvailable">
                 Ask AI
@@ -455,6 +455,36 @@ async function sleep(ms) {
   border-radius: 4px;
   border: 1px solid var(--border-light);
   min-height: 100px;
+}
+
+.ai_result_content.scrollable-panel {
+  flex: 1 1 auto;
+  min-height: 100px;
+  max-height: 250px;
+  overflow-y: auto;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid var(--border-light);
+  background: var(--panel-bg);
+  transition: background 0.3s, color 0.3s;
+}
+
+.scrollable-panel::-webkit-scrollbar {
+  width: 8px;
+  background: var(--bg-secondary);
+}
+.scrollable-panel::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+.scrollable-panel::-webkit-scrollbar-thumb:hover {
+  background: var(--button-primary);
+}
+
+/* For Firefox */
+.scrollable-panel {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) var(--bg-secondary);
 }
 
 .ai-panel-transition-enter-active,
